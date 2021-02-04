@@ -1,27 +1,25 @@
 package org.order_service.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @Entity
-@Table(name = "orders", schema = "public")
+@Table(name = "orders")
 public class Order {
     @Id
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     @Column(name = "offer_id")
     private int offerId;
     @Column(name = "name", length = 20)
     private String name;
+    @Setter(AccessLevel.NONE)
     @Column(name = "delivery_time")
     private LocalDateTime deliveryTime;
     @ManyToOne
@@ -32,5 +30,11 @@ public class Order {
     @Column(name = "paid")
     private boolean paid;
 
+    public void setDeliveryTime(String deliveryTime) {
+        this.deliveryTime = LocalDateTime.parse(deliveryTime);
+    }
 
+    public void setDeliveryTime(LocalDateTime deliveryTime) {
+        this.deliveryTime = deliveryTime;
+    }
 }

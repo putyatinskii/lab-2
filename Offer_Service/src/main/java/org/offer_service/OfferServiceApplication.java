@@ -14,17 +14,14 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class OfferServiceApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(OfferServiceApplication.class);
-        OfferRepository offerRepository = context.getBean(OfferRepository.class);
-        CharacteristicRepository characteristicRepository = context.getBean(CharacteristicRepository.class);
-        CategoryRepository categoryRepository = context.getBean(CategoryRepository.class);
 
-        Characteristic characteristic = new Characteristic("name", "description");
-        Category category = new Category("NewCategory");
-        Offer offer = new Offer("NewOffer", 10, 1);
-        characteristicRepository.save(characteristic);
-        categoryRepository.save(category);
-        offer.setCategory(category);
-        offerRepository.save(offer);
-        context.close();
+//        Characteristic characteristic = new Characteristic("name", "description");
+//        Category category = new Category("NewCategory");
+//        Offer offer = new Offer("NewOffer", 10, 1);
+//        characteristicRepository.save(characteristic);
+//        categoryRepository.save(category);
+//        offer.setCategory(category);
+//        offerRepository.save(offer);
+//        context.close();
     }
 }
