@@ -1,11 +1,14 @@
 package org.customer_service.controllers;
 
 import org.customer_service.business_logic.CustomerLogic;
+import org.customer_service.business_logic.PaidTypeLogic;
 import org.customer_service.entities.Customer;
+import org.customer_service.entities.PaidType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("customer_service/customer")
@@ -36,5 +39,16 @@ public class CustomerController {
     @DeleteMapping(value = "/id={id}")
     public void deleteCustomer(@PathVariable Integer id) {
         customerLogic.delete(customerLogic.get(id));
+    }
+
+    @PutMapping(value = "/id={id}/paidTypeId={paidTypeId}")
+    public String addPaidType(@PathVariable Integer id, @PathVariable Integer paidTypeId) {
+        customerLogic.addPaidType(id, paidTypeId);
+        return "paidType was added successfully";
+    }
+
+    @GetMapping(value = "/id={id}/getPaidTypes")
+    public Set<PaidType> getSetOfPaidTypes(@PathVariable Integer id) {
+        return customerLogic.getPaidTypes(id);
     }
 }

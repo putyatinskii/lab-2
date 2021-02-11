@@ -6,8 +6,10 @@ import lombok.*;
 import org.springframework.util.DigestUtils;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
-@Data
+@Getter
 @NoArgsConstructor
 @Entity
 @Table(name = "customers")
@@ -31,21 +33,53 @@ public class Customer implements Cloneable {
     @ManyToOne
     @JoinColumn(name = "addressId")
     private Address address;
+    @ManyToMany
+    @JoinTable(name = "customers_paid_types",
+    joinColumns = @JoinColumn(name = "customer_id", referencedColumnName = "id"),
+    inverseJoinColumns = @JoinColumn(name = "paid_type_id", referencedColumnName = "id"))
+    private Set<PaidType> paidTypes = new HashSet<>();
+
+    @JsonIgnore
+    public String getPassword() {
+        return password;
+    }
+
+    public void setFirstname(String firstname) {
+        if (firstname.length() >= 3 && firstname.length() <= 20)
+            this.firstname = firstname;
+    }
+
+    public void setLastname(String lastname) {
+        if (lastname.length() >= 3 && lastname.length() <= 20)
+            this.lastname = lastname;
+    }
+
+    public void setEmail(String email) {
+        if (email.length() >= 10 && email.length() <= 30 && email.matches("\\w+@\\w+\\.\\w+"))
+            this.email = email;
+    }
+
+    public void setPhone(String phone) {
+        if (phone.length() == 12 && phone.matches("\\+\\d{11}"))
+            this.phone = phone;
+    }
 
     @JsonProperty
     public void setPassword(String password) {
-        this.password = DigestUtils.md5DigestAsHex(password.getBytes());
+        if (password.length() > 5 && password.length() <= 20)
+            this.password = DigestUtils.md5DigestAsHex(password.getBytes());
     }
 
-    @Override
-    public Customer clone() throws CloneNotSupportedException {
-        Customer c = new Customer();
-        c.setFirstname(this.firstname);
-        c.setLastname(this.lastname);
-        c.setEmail(this.email);
-        c.setPhone(this.phone);
-        c.setPassword(this.password);
-        c.setAddress(this.address);
-        return c;
+    public void setAddress(Address address) {
+        try {
+            this.address = address.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
     }
+
+    public void setPaidType(PaidType paidType) {
+        paidTypes.add(paidType);
+    }
+
 }

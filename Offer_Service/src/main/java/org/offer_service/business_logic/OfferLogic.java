@@ -2,6 +2,7 @@ package org.offer_service.business_logic;
 
 import org.offer_service.entities.Category;
 import org.offer_service.entities.Offer;
+import org.offer_service.exception.DataErrorException;
 import org.offer_service.exception.NotFoundException;
 import org.offer_service.repositories.CategoryRepository;
 import org.offer_service.repositories.OfferRepository;
@@ -27,13 +28,19 @@ public class OfferLogic implements BusinessLogic<Offer> {
 
     @Override
     public Offer get(Integer id) {
-        Offer offer = offerRepository.findById(id).orElseThrow(NotFoundException::new);
-        return offer;
+        return offerRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
     @Override
     public Offer create(Offer offer) {
-        return null;
+        if (categoryRepository.existsById(offer.getCategory().getId())) {
+            Category category = categoryRepository.findById(offer.getCategory().getId())
+                    .orElseThrow(NotFoundException::new);
+            offer.setCategory(category);
+            return offerRepository.save(offer);
+        } else {
+            throw new DataErrorException();
+        }
     }
 
     @Override
@@ -43,6 +50,6 @@ public class OfferLogic implements BusinessLogic<Offer> {
 
     @Override
     public void delete(Offer offer) {
-        offerRepository.delete(offer);
+        categoryRepository.delete(offer.getCategory());
     }
 }

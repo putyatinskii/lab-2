@@ -3,6 +3,7 @@ package org.customer_service.controllers;
 import org.customer_service.business_logic.PaidTypeLogic;
 import org.customer_service.entities.Customer;
 import org.customer_service.entities.PaidType;
+import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

@@ -13,7 +13,7 @@ public class OfferController {
     @Autowired
     OfferLogic offerLogic;
 
-    @GetMapping(value = "/listOfOffer")
+    @GetMapping(value = "/listOfOffers")
     public List<Offer> getAllOffer() {
         return offerLogic.getAll();
     }

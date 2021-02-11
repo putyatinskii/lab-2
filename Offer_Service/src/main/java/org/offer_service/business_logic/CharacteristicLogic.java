@@ -1,6 +1,7 @@
 package org.offer_service.business_logic;
 
 import org.offer_service.entities.Characteristic;
+import org.offer_service.exception.DataErrorException;
 import org.offer_service.exception.NotFoundException;
 import org.offer_service.repositories.CharacteristicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,18 +24,31 @@ public class CharacteristicLogic implements BusinessLogic<Characteristic> {
 
     @Override
     public Characteristic get(Integer id) {
-        Characteristic characteristic = characteristicRepository.findById(id).orElseThrow(NotFoundException::new);
-        return characteristic;
+        return characteristicRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
     @Override
     public Characteristic create(Characteristic characteristic) {
-        return characteristicRepository.save(characteristic);
+        if (characteristic.getName() != null &&
+                characteristic.getDescription() != null)
+            return characteristicRepository.save(characteristic);
+        else {
+            throw new DataErrorException();
+        }
     }
 
     @Override
     public Characteristic update(Integer id, Characteristic characteristic) {
-        return null;
+        if (characteristic.getName() != null &&
+                characteristic.getDescription() != null) {
+            Characteristic characteristicFromDB = get(id);
+            characteristicFromDB.setName(characteristic.getName());
+            characteristicFromDB.setDescription(characteristic.getDescription());
+            return characteristicRepository.save(characteristicFromDB);
+        }
+        else {
+            throw new DataErrorException();
+        }
     }
 
     @Override
