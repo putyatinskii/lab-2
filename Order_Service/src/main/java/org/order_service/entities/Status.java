@@ -1,23 +1,17 @@
 package org.order_service.entities;
 
+public enum Status {
+    ORDER_PROCESSING("Order_processing"),
+    ORDER_DELIVERY("Order_delivery"),
+    ORDER_DELIVERED("Order_delivered");
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
-
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-
-@Data
-@NoArgsConstructor
-@Entity
-@Table(name = "status")
-public class Status {
-    @Id
-    @JsonIgnore
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @Column(name = "name", length = 20)
     private String name;
 
+    Status(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

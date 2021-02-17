@@ -2,13 +2,16 @@ package org.offer_service.business_logic;
 
 import org.offer_service.entities.Characteristic;
 import org.offer_service.exception.DataErrorException;
+import org.offer_service.exception.DeleteException;
 import org.offer_service.exception.NotFoundException;
 import org.offer_service.repositories.CharacteristicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class CharacteristicLogic implements BusinessLogic<Characteristic> {
@@ -30,7 +33,8 @@ public class CharacteristicLogic implements BusinessLogic<Characteristic> {
     @Override
     public Characteristic create(Characteristic characteristic) {
         if (characteristic.getName() != null &&
-                characteristic.getDescription() != null)
+                characteristic.getDescription() != null &&
+                !characteristicRepository.existsByName(characteristic.getName()))
             return characteristicRepository.save(characteristic);
         else {
             throw new DataErrorException();
@@ -42,6 +46,10 @@ public class CharacteristicLogic implements BusinessLogic<Characteristic> {
         if (characteristic.getName() != null &&
                 characteristic.getDescription() != null) {
             Characteristic characteristicFromDB = get(id);
+            if (!characteristic.getName().equals(characteristicFromDB.getName()))
+                if (characteristicRepository.existsByName(characteristic.getName())) {
+                    throw new DataErrorException();
+                }
             characteristicFromDB.setName(characteristic.getName());
             characteristicFromDB.setDescription(characteristic.getDescription());
             return characteristicRepository.save(characteristicFromDB);
@@ -53,6 +61,28 @@ public class CharacteristicLogic implements BusinessLogic<Characteristic> {
 
     @Override
     public void delete(Characteristic characteristic) {
-        characteristicRepository.delete(characteristic);
+        try {
+            characteristicRepository.delete(characteristic);
+        } catch (Exception ex) {
+            throw new DeleteException();
+        }
+    }
+
+    public Set<Characteristic> saveCharacteristics(Set<Characteristic> characteristics) {
+        Set<Characteristic> characteristicSet = new HashSet<>();
+        for (Characteristic characteristic : characteristics) {
+            if(!characteristicRepository.existsByName(characteristic.getName())) {
+                create(characteristic);
+                characteristicSet.add(characteristic);
+            }
+            else {
+                Characteristic characteristic1 = characteristicRepository.findByName(characteristic.getName())
+                        .orElseThrow(DataErrorException::new);
+                characteristic1.setDescription(characteristic.getDescription());
+                update(characteristic1.getId(), characteristic1);
+                characteristicSet.add(characteristic1);
+            }
+        }
+        return characteristicSet;
     }
 }

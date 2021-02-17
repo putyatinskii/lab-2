@@ -1,6 +1,7 @@
 package org.offer_service.business_logic;
 
 import org.offer_service.entities.Category;
+import org.offer_service.entities.Characteristic;
 import org.offer_service.entities.Offer;
 import org.offer_service.exception.DataErrorException;
 import org.offer_service.exception.NotFoundException;
@@ -18,6 +19,8 @@ public class OfferLogic implements BusinessLogic<Offer> {
     private OfferRepository offerRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private CharacteristicLogic characteristicLogic;
 
     @Override
     public List<Offer> getAll() {
@@ -33,23 +36,40 @@ public class OfferLogic implements BusinessLogic<Offer> {
 
     @Override
     public Offer create(Offer offer) {
-        if (categoryRepository.existsById(offer.getCategory().getId())) {
-            Category category = categoryRepository.findById(offer.getCategory().getId())
-                    .orElseThrow(NotFoundException::new);
-            offer.setCategory(category);
+        if (offer.getName() != null &&
+                offer.getCategory() != null &&
+                offer.getPrice() != 0 &&
+                offer.getPaidTypeId() != 0) {
+            offer.setCharacteristics(characteristicLogic.saveCharacteristics(offer.getCharacteristics()));
             return offerRepository.save(offer);
-        } else {
+        }
+        else {
             throw new DataErrorException();
         }
     }
 
     @Override
     public Offer update(Integer id, Offer offer) {
-        return null;
+        if (offer.getName() != null &&
+                offer.getCategory() != null &&
+                offer.getPrice() != 0 &&
+                offer.getPaidTypeId() != 0) {
+            Offer offerFromDB = get(id);
+            offerFromDB.setName(offer.getName());
+            offerFromDB.setCategory(offer.getCategory());
+            offerFromDB.setPrice(offer.getPrice());
+            offerFromDB.setPaidTypeId(offer.getPaidTypeId());
+            offerFromDB.setCharacteristics(
+                    characteristicLogic.saveCharacteristics(offer.getCharacteristics()));
+            return offerRepository.save(offerFromDB);
+        }
+        else {
+            throw new DataErrorException();
+        }
     }
 
     @Override
     public void delete(Offer offer) {
-        categoryRepository.delete(offer.getCategory());
+        offerRepository.delete(offer);
     }
 }

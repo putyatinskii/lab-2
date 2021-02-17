@@ -5,6 +5,7 @@ import org.customer_service.entities.Customer;
 import org.customer_service.entities.PaidType;
 import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,27 +17,28 @@ public class PaidTypeController {
     private PaidTypeLogic paidTypeLogic;
 
     @GetMapping(value = "/listOfPaidTypes")
-    public List<PaidType> getAllPaidType() {
-        return paidTypeLogic.getAll();
+    public ResponseEntity<List<PaidType>> getAllPaidType() {
+        return ResponseEntity.ok(paidTypeLogic.getAll());
     }
 
     @GetMapping(value = "/id={id}")
-    public PaidType get(@PathVariable Integer id) {
-        return paidTypeLogic.get(id);
+    public ResponseEntity<PaidType> get(@PathVariable Integer id) {
+        return ResponseEntity.ok(paidTypeLogic.get(id));
     }
 
     @PostMapping(value = "/new")
-    public PaidType createPaidType(@RequestBody PaidType paidType) {
-        return paidTypeLogic.create(paidType);
+    public ResponseEntity<PaidType> createPaidType(@RequestBody PaidType paidType) {
+        return ResponseEntity.ok(paidTypeLogic.create(paidType));
     }
 
     @PutMapping(value = "/id={id}")
-    public PaidType updatePaidType(@PathVariable Integer id, @RequestBody PaidType paidType) {
-        return paidTypeLogic.update(id, paidType);
+    public ResponseEntity<PaidType> updatePaidType(@PathVariable Integer id, @RequestBody PaidType paidType) {
+        return ResponseEntity.ok(paidTypeLogic.update(id, paidType));
     }
 
     @DeleteMapping(value = "/id={id}")
-    public void deletePaidType(@PathVariable Integer id) {
+    public ResponseEntity<String> deletePaidType(@PathVariable Integer id) {
         paidTypeLogic.delete(paidTypeLogic.get(id));
+        return ResponseEntity.ok("PaidType was removed successfully");
     }
 }

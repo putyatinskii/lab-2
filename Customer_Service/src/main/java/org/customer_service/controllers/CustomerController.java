@@ -5,6 +5,7 @@ import org.customer_service.business_logic.PaidTypeLogic;
 import org.customer_service.entities.Customer;
 import org.customer_service.entities.PaidType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,38 +18,39 @@ public class CustomerController {
     private CustomerLogic customerLogic;
 
     @GetMapping(value = "/listOfCustomers")
-    public List<Customer> getAllCustomers() {
-        return customerLogic.getAll();
+    public ResponseEntity<List<Customer>> getAllCustomers() {
+        return ResponseEntity.ok(customerLogic.getAll());
     }
 
     @GetMapping(value = "/id={id}")
-    public Customer getCustomer(@PathVariable Integer id) {
-        return customerLogic.get(id);
+    public ResponseEntity<Customer> getCustomer(@PathVariable Integer id) {
+        return ResponseEntity.ok(customerLogic.get(id));
     }
 
     @PostMapping(value = "/new")
-    public Customer createCustomer(@RequestBody Customer customer) {
-        return customerLogic.create(customer);
+    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
+        return ResponseEntity.ok(customerLogic.create(customer));
     }
 
     @PutMapping(value = "/id={id}")
-    public Customer updateCustomer(@PathVariable Integer id, @RequestBody Customer customer) {
-            return customerLogic.update(id, customer);
+    public ResponseEntity<Customer> updateCustomer(@PathVariable Integer id, @RequestBody Customer customer) {
+            return ResponseEntity.ok(customerLogic.update(id, customer));
     }
 
     @DeleteMapping(value = "/id={id}")
-    public void deleteCustomer(@PathVariable Integer id) {
+    public ResponseEntity<String> deleteCustomer(@PathVariable Integer id) {
         customerLogic.delete(customerLogic.get(id));
+        return ResponseEntity.ok("Customer was removed successfully");
     }
 
     @PutMapping(value = "/id={id}/paidTypeId={paidTypeId}")
-    public String addPaidType(@PathVariable Integer id, @PathVariable Integer paidTypeId) {
+    public ResponseEntity<String> addPaidType(@PathVariable Integer id, @PathVariable Integer paidTypeId) {
         customerLogic.addPaidType(id, paidTypeId);
-        return "paidType was added successfully";
+        return ResponseEntity.ok("PaidType was added successfully");
     }
 
     @GetMapping(value = "/id={id}/getPaidTypes")
-    public Set<PaidType> getSetOfPaidTypes(@PathVariable Integer id) {
-        return customerLogic.getPaidTypes(id);
+    public ResponseEntity<Set<PaidType>> getSetOfPaidTypes(@PathVariable Integer id) {
+        return ResponseEntity.ok(customerLogic.getPaidTypes(id));
     }
 }

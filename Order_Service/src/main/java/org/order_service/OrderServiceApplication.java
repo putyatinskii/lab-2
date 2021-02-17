@@ -1,9 +1,5 @@
 package org.order_service;
 
-import org.order_service.business_logic.OrderLogic;
-import org.order_service.entities.Status;
-import org.order_service.repositories.OrderRepository;
-import org.order_service.repositories.StatusRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;

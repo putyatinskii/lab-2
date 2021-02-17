@@ -3,6 +3,7 @@ package org.offer_service.controllers;
 import org.offer_service.business_logic.OfferLogic;
 import org.offer_service.entities.Offer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,27 +15,28 @@ public class OfferController {
     OfferLogic offerLogic;
 
     @GetMapping(value = "/listOfOffers")
-    public List<Offer> getAllOffer() {
-        return offerLogic.getAll();
+    public ResponseEntity<List<Offer>> getAllOffer() {
+        return ResponseEntity.ok(offerLogic.getAll());
     }
 
     @GetMapping(value = "/id={id}")
-    public Offer getOffer(@PathVariable Integer id) {
-        return offerLogic.get(id);
+    public ResponseEntity<Offer> getOffer(@PathVariable Integer id) {
+        return ResponseEntity.ok(offerLogic.get(id));
     }
 
     @PostMapping(value = "/new")
-    public Offer createOffer(@RequestBody Offer offer) {
-        return offerLogic.create(offer);
+    public ResponseEntity<Offer> createOffer(@RequestBody Offer offer) {
+        return ResponseEntity.ok(offerLogic.create(offer));
     }
 
     @PutMapping(value = "/id={id}")
-    public Offer updateOffer(@PathVariable Integer id, @RequestBody Offer offer) {
-        return offerLogic.update(id, offer);
+    public ResponseEntity<Offer> updateOffer(@PathVariable Integer id, @RequestBody Offer offer) {
+        return ResponseEntity.ok(offerLogic.update(id, offer));
     }
 
     @DeleteMapping(value = "/id={id}")
-    public void deleteOffer(@PathVariable Integer id) {
+    public ResponseEntity<String> deleteOffer(@PathVariable Integer id) {
         offerLogic.delete(offerLogic.get(id));
+        return ResponseEntity.ok("Offer was removed successfully");
     }
 }

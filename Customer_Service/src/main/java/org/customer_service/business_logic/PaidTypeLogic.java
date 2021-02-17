@@ -1,13 +1,11 @@
 package org.customer_service.business_logic;
 
-import org.customer_service.entities.Customer;
 import org.customer_service.entities.PaidType;
-import org.customer_service.exceptions.DataErrorException;
+import org.customer_service.exceptions.IncorrectDataException;
 import org.customer_service.exceptions.DeleteException;
 import org.customer_service.exceptions.NotFoundException;
 import org.customer_service.repositories.PaidTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,7 +33,7 @@ public class PaidTypeLogic implements BusinessLogicMethods<PaidType> {
         if (paidType.getName() != null)
             return paidTypeRepository.save(paidType);
         else {
-            throw new DataErrorException();
+            throw new IncorrectDataException();
         }
     }
 
@@ -47,7 +45,7 @@ public class PaidTypeLogic implements BusinessLogicMethods<PaidType> {
             return paidTypeRepository.save(paidTypeFormDB);
         }
         else {
-            throw new DataErrorException();
+            throw new IncorrectDataException();
         }
     }
 

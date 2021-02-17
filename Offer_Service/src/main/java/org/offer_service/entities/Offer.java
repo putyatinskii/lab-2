@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @NoArgsConstructor
@@ -21,9 +23,14 @@ public class Offer {
     private double price;
     @Column(name = "paid_type_id")
     private int paidTypeId;
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @Column(name = "category_id")
+    @Getter(AccessLevel.NONE)
+    private CategoryEnum category;
+    @ManyToMany
+    @JoinTable(name = "characteristics_offers",
+            joinColumns = @JoinColumn(name = "offer_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "characteristic_id", referencedColumnName = "id"))
+    private Set<Characteristic> characteristics = new HashSet<>();
 
     public void setName(String name) {
         if (name.length() >= 4 && name.length() <= 20)
@@ -36,14 +43,19 @@ public class Offer {
     }
 
     public void setPaidTypeId(int paidTypeId) {
-        this.paidTypeId = paidTypeId;
+        if (paidTypeId > 0)
+            this.paidTypeId = paidTypeId;
     }
 
-    public void setCategory(Category category) {
-        try {
-            this.category = category.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+    public String getCategory() {
+        return category.getName();
+    }
+
+    public void setCategory(String category) {
+        this.category = CategoryEnum.valueOf(category.toUpperCase());
+    }
+
+    public void setCharacteristics(Set<Characteristic> characteristics) {
+        this.characteristics = new HashSet<>(characteristics);
     }
 }

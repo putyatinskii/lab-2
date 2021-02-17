@@ -1,14 +1,11 @@
 package org.customer_service.business_logic;
 
-import lombok.RequiredArgsConstructor;
-import org.customer_service.entities.Address;
 import org.customer_service.entities.Customer;
 import org.customer_service.entities.PaidType;
 import org.customer_service.exceptions.NotFoundException;
-import org.customer_service.exceptions.DataErrorException;
+import org.customer_service.exceptions.IncorrectDataException;
 import org.customer_service.repositories.AddressRepository;
 import org.customer_service.repositories.CustomerRepository;
-import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,7 +51,7 @@ public class CustomerLogic implements BusinessLogicMethods<Customer>{
                 return customerRepository.save(customer);
             }
         }
-        throw new DataErrorException();
+        throw new IncorrectDataException();
     }
 
     @Override
@@ -70,11 +67,11 @@ public class CustomerLogic implements BusinessLogicMethods<Customer>{
                 Customer customerFromDB = get(id);
                 if (!customerFromDB.getPhone().equals(customer.getPhone()))
                         if (customerRepository.existsByPhone(customer.getPhone())) {
-                            throw new DataErrorException();
+                            throw new IncorrectDataException();
                 }
                 else if (!customerFromDB.getEmail().equals(customer.getEmail()))
                         if (customerRepository.existsByEmail(customer.getEmail())) {
-                            throw new DataErrorException();
+                            throw new IncorrectDataException();
                 }
                 customerFromDB.getAddress().setCity(customer.getAddress().getCity());
                 customerFromDB.getAddress().setState(customer.getAddress().getState());
@@ -96,7 +93,7 @@ public class CustomerLogic implements BusinessLogicMethods<Customer>{
                 return customerRepository.save(customerFromDB);
             }
         }
-        throw new DataErrorException();
+        throw new IncorrectDataException();
     }
 
     @Override
