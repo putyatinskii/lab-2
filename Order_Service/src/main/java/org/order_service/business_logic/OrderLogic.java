@@ -11,12 +11,15 @@ import org.order_service.exceptions.IncorrectDataException;
 import org.order_service.exceptions.NotFoundException;
 import org.order_service.repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.ReflectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class OrderLogic implements BusinessLogic<Order> {
@@ -68,21 +71,14 @@ public class OrderLogic implements BusinessLogic<Order> {
         orderRepository.delete(order);
     }
 
-    private Order applyPatchToOrder(
-            JsonPatch patch, Order targetOrder) throws JsonPatchException, JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode patched = patch.apply(objectMapper.convertValue(targetOrder, JsonNode.class));
-        return objectMapper.treeToValue(patched, Order.class);
-    }
-
-    public Order changeStatus(Integer id, JsonPatch patch) {
-        Order order = get(id);
-        Order patchOrder;
-        try {
-            patchOrder = applyPatchToOrder(patch, order);
-        } catch (JsonPatchException | JsonProcessingException e) {
+    public Order changeStatus(Integer id, Order order) {
+        Order orderFromDB = get(id);
+        if (order.getStatus() != null) {
+            orderFromDB.setStatus(order.getStatus());
+            return orderRepository.save(orderFromDB);
+        }
+        else {
             throw new IncorrectDataException();
         }
-        return orderRepository.save(patchOrder);
     }
 }
